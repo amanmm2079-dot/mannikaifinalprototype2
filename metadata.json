@@ -1,0 +1,6 @@
+{
+  "name": "Mannik AI - Dynamic Distress Monitoring",
+  "description": "AI-Powered Dynamic Mental Health Monitoring and Distress Prediction System for Victims of Atrocities with human-in-the-loop intervention.",
+  "requestFramePermissions": ["microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

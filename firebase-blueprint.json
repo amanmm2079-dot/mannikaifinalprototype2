@@ -1,0 +1,229 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile with role-based access attributes",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "maxLength": 128 },
+        "name": { "type": "string", "maxLength": 100 },
+        "email": { "type": "string", "format": "email", "maxLength": 128 },
+        "role": { 
+          "type": "string", 
+          "enum": ["victim", "counsellor", "district_officer", "state_admin", "national_admin", "auditor"] 
+        },
+        "active": { "type": "boolean" },
+        "districtId": { "type": "string", "maxLength": 50 },
+        "stateId": { "type": "string", "maxLength": 50 },
+        "language": { "type": "string", "maxLength": 10 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "name", "email", "role", "active"]
+    },
+    "Case": {
+      "title": "Case",
+      "description": "Protected distress monitoring case record for victim of atrocity",
+      "type": "object",
+      "properties": {
+        "caseId": { "type": "string", "pattern": "^[a-zA-Z0-9_-]+$", "maxLength": 64 },
+        "ownerUid": { "type": "string", "maxLength": 128 },
+        "assignedCounsellorUid": { "type": "string", "maxLength": 128 },
+        "assignedCounsellorName": { "type": "string", "maxLength": 100 },
+        "assignedCaseworkerUid": { "type": "string", "maxLength": 128 },
+        "assignedCaseworkerName": { "type": "string", "maxLength": 100 },
+        "victimAlias": { "type": "string", "maxLength": 100 },
+        "category": { "type": "string", "maxLength": 150 },
+        "incidentType": { "type": "string", "maxLength": 150 },
+        "status": { 
+          "type": "string", 
+          "enum": ["triage", "human_review", "assigned", "intervention", "monitoring", "resolved"] 
+        },
+        "priority": { 
+          "type": "string", 
+          "enum": ["normal", "medium", "high", "urgent"] 
+        },
+        "distressScore": { "type": "number" },
+        "previousDistressScore": { "type": "number" },
+        "trajectory": { 
+          "type": "string", 
+          "enum": ["stable", "gradual_increase", "acute_spike", "improving"] 
+        },
+        "flaggedFactors": { "type": "array" },
+        "createdBy": { "type": "string", "maxLength": 100 },
+        "updatedBy": { "type": "string", "maxLength": 100 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["caseId", "ownerUid", "victimAlias", "status", "priority", "distressScore"]
+    },
+    "CaseEvent": {
+      "title": "CaseEvent",
+      "description": "Immutable chronological case timeline event",
+      "type": "object",
+      "properties": {
+        "eventType": { "type": "string", "maxLength": 64 },
+        "description": { "type": "string", "maxLength": 500 },
+        "createdBy": { "type": "string", "maxLength": 100 },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["eventType", "description", "createdBy"]
+    },
+    "CaseReview": {
+      "title": "CaseReview",
+      "description": "Human-in-the-loop clinical review report",
+      "type": "object",
+      "properties": {
+        "caseId": { "type": "string", "maxLength": 64 },
+        "reviewerUid": { "type": "string", "maxLength": 128 },
+        "reviewerName": { "type": "string", "maxLength": 100 },
+        "reviewerRole": { "type": "string", "maxLength": 50 },
+        "reviewStatus": { "type": "string", "maxLength": 50 },
+        "observations": { "type": "string", "maxLength": 1000 },
+        "interventionAction": { "type": "string", "maxLength": 500 },
+        "followUpRequired": { "type": "boolean" },
+        "followUpDate": { "type": "string", "maxLength": 50 },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["caseId", "reviewerUid", "reviewStatus", "observations"]
+    },
+    "Intervention": {
+      "title": "Intervention",
+      "description": "Multi-sectoral welfare and rehabilitation intervention",
+      "type": "object",
+      "properties": {
+        "caseId": { "type": "string", "maxLength": 64 },
+        "victimAlias": { "type": "string", "maxLength": 100 },
+        "category": { "type": "string", "maxLength": 64 },
+        "title": { "type": "string", "maxLength": 150 },
+        "recommendationReason": { "type": "string", "maxLength": 500 },
+        "urgency": { "type": "string", "maxLength": 20 },
+        "status": { "type": "string", "maxLength": 30 },
+        "authorizedBy": { "type": "string", "maxLength": 100 },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["caseId", "category", "title"]
+    },
+    "AuditLog": {
+      "title": "AuditLog",
+      "description": "Cryptographically verifiable immutable audit log record",
+      "type": "object",
+      "properties": {
+        "actorUid": { "type": "string", "maxLength": 128 },
+        "actorRole": { "type": "string", "maxLength": 50 },
+        "action": { "type": "string", "maxLength": 100 },
+        "targetType": { "type": "string", "maxLength": 50 },
+        "targetId": { "type": "string", "maxLength": 128 },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["actorUid", "actorRole", "action", "targetType", "targetId"]
+    },
+    "SystemConfig": {
+      "title": "SystemConfig",
+      "description": "Configurable risk thresholds and escalation triggers",
+      "type": "object",
+      "properties": {
+        "lowBandMax": { "type": "number" },
+        "moderateBandMax": { "type": "number" },
+        "highBandMax": { "type": "number" },
+        "urgentBandMin": { "type": "number" },
+        "escalationDelta": { "type": "number" },
+        "alertCooldownHours": { "type": "number" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["lowBandMax", "moderateBandMax", "highBandMax", "urgentBandMin"]
+    },
+    "AssessmentResponse": {
+      "title": "AssessmentResponse",
+      "description": "Multi-section structured check-in assessment response",
+      "type": "object",
+      "properties": {
+        "assessmentId": { "type": "string", "maxLength": 64 },
+        "caseId": { "type": "string", "maxLength": 64 },
+        "userId": { "type": "string", "maxLength": 128 },
+        "language": { "type": "string", "maxLength": 10 },
+        "source": { "type": "string", "maxLength": 50 },
+        "version": { "type": "string", "maxLength": 30 },
+        "calculatedDistressScore": { "type": "number" },
+        "riskBand": { "type": "string", "enum": ["low", "moderate", "high", "urgent"] },
+        "submittedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["assessmentId", "caseId", "userId", "version", "calculatedDistressScore"]
+    },
+    "SupportRequest": {
+      "title": "SupportRequest",
+      "description": "Survivor request for direct human assistance from counsellor or caseworker",
+      "type": "object",
+      "properties": {
+        "caseId": { "type": "string", "maxLength": 64 },
+        "userId": { "type": "string", "maxLength": 128 },
+        "userName": { "type": "string", "maxLength": 100 },
+        "type": { "type": "string", "enum": ["counsellor", "legal", "financial", "general", "urgent_callback"] },
+        "urgency": { "type": "string", "enum": ["routine", "priority", "urgent"] },
+        "status": { "type": "string", "enum": ["pending", "acknowledged", "in_progress", "resolved"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["caseId", "userId", "type", "status"]
+    },
+    "SOSAlert": {
+      "title": "SOSAlert",
+      "description": "Urgent emergency distress signal with location routing",
+      "type": "object",
+      "properties": {
+        "sosId": { "type": "string", "maxLength": 64 },
+        "caseId": { "type": "string", "maxLength": 64 },
+        "userId": { "type": "string", "maxLength": 128 },
+        "userAlias": { "type": "string", "maxLength": 100 },
+        "district": { "type": "string", "maxLength": 64 },
+        "state": { "type": "string", "maxLength": 64 },
+        "responderId": { "type": "string", "maxLength": 64 },
+        "responderName": { "type": "string", "maxLength": 150 },
+        "alertStatus": { "type": "string", "enum": ["TRIGGERED", "ROUTING", "SENT", "ACKNOWLEDGED", "RESPONSE_IN_PROGRESS", "RESOLVED", "CANCELLED"] },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["sosId", "caseId", "userId", "alertStatus", "timestamp"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "User profiles with role permissions and geographic authority"
+    },
+    "/cases/{caseId}": {
+      "schema": "Case",
+      "description": "Protected distress monitoring case records with RBAC scoping"
+    },
+    "/cases/{caseId}/events/{eventId}": {
+      "schema": "CaseEvent",
+      "description": "Append-only chronological timeline of case milestones"
+    },
+    "/cases/{caseId}/reviews/{reviewId}": {
+      "schema": "CaseReview",
+      "description": "Clinical reviews by authorized counselors"
+    },
+    "/cases/{caseId}/interventions/{interventionId}": {
+      "schema": "Intervention",
+      "description": "Dispatched legal aid, compensation, safe shelter, or clinical interventions"
+    },
+    "/assessmentResponses/{responseId}": {
+      "schema": "AssessmentResponse",
+      "description": "Longitudinal structured check-in responses from survivors"
+    },
+    "/supportRequests/{requestId}": {
+      "schema": "SupportRequest",
+      "description": "Human contact and caseworker outreach requests"
+    },
+    "/sosAlerts/{alertId}": {
+      "schema": "SOSAlert",
+      "description": "Emergency SOS trigger records routed to nearest support points"
+    },
+    "/auditLogs/{logId}": {
+      "schema": "AuditLog",
+      "description": "Tamper-evident audit trail for system auditor and compliance oversight"
+    },
+    "/systemConfig/{configId}": {
+      "schema": "SystemConfig",
+      "description": "Central risk calculation parameters and thresholds"
+    }
+  }
+}
